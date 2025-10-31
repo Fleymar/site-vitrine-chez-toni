@@ -1,0 +1,317 @@
+import './style.css'
+import javascriptLogo from './javascript.svg'
+import viteLogo from '/vite.svg'
+import { setupCounter } from './counter.js'
+
+document.querySelector('#app').innerHTML = `
+  <header class="header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo">
+                    <h2>Traiteur <span>Strasbourg</span></h2>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="#accueil" class="nav-link">Accueil</a></li>
+                    <li><a href="#specialites" class="nav-link">Spécialités</a></li>
+                    <li><a href="#menu" class="nav-link">Menu</a></li>
+                    <li><a href="#apropos" class="nav-link">À propos</a></li>
+                    <li><a href="#contact" class="nav-link">Contact</a></li>
+                </ul>
+                <div class="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="accueil" class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Cuisine Authentique<br><span>à Strasbourg</span></h1>
+            <p class="hero-description">Découvrez nos spécialités préparées avec passion et des ingrédients frais pour sublimer vos événements</p>
+            <div class="hero-buttons">
+                <a href="#specialites" class="btn btn-primary">Nos Spécialités</a>
+                <a href="#contact" class="btn btn-secondary">Nous Contacter</a>
+            </div>
+        </div>
+        <div class="hero-image">
+            <img src="assets/img/Resto.jpg" alt="Restaurant" class="floating-image">
+        </div>
+    </section>
+
+    <!-- Spécialités Section -->
+    <section id="specialites" class="specialites">
+        <div class="container">
+            <div class="section-header">
+                <h2>Nos Spécialités</h2>
+                <p>Une sélection de plats préparés avec amour et savoir-faire</p>
+            </div>
+            <div class="specialites-grid">
+                <div class="card">
+                    <div class="card-image">
+                        <img src="assets/img/burger-frites.jpg" alt="Burger Frites">
+                        <div class="card-overlay">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <h3>Burger Artisanal</h3>
+                        <p>Burger maison avec frites croustillantes, préparé avec des ingrédients frais et locaux</p>
+                        <div class="card-price">À partir de 12€</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-image">
+                        <img src="assets/img/poulet-frites.jpg" alt="Poulet Frites">
+                        <div class="card-overlay">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <h3>Poulet Rôti</h3>
+                        <p>Poulet fermier rôti à la perfection, accompagné de frites dorées et sauce maison</p>
+                        <div class="card-price">À partir de 14€</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-image">
+                        <img src="assets/img/kebab.jpg" alt="Kebab">
+                        <div class="card-overlay">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <h3>Kebab Traditionnel</h3>
+                        <p>Kebab préparé selon la tradition, viande marinée et légumes frais</p>
+                        <div class="card-price">À partir de 8€</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-image">
+                        <img src="assets/img/Nems.jpg" alt="Nems">
+                        <div class="card-overlay">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <h3>Nems Croustillants</h3>
+                        <p>Nems faits maison, croustillants à l'extérieur et savoureux à l'intérieur</p>
+                        <div class="card-price">À partir de 6€</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-image">
+                        <img src="assets/img/Amuses-bouches.jpg" alt="Amuses-bouches">
+                        <div class="card-overlay">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <h3>Amuses-Bouches</h3>
+                        <p>Sélection raffinée d'amuses-bouches pour vos réceptions et événements</p>
+                        <div class="card-price">À partir de 3€/pièce</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-image">
+                        <img src="assets/img/cocktail.jpg" alt="Cocktails">
+                        <div class="card-overlay">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <h3>Cocktails & Boissons</h3>
+                        <p>Large sélection de cocktails et boissons pour accompagner vos repas</p>
+                        <div class="card-price">À partir de 5€</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Menu Section -->
+    <section id="menu" class="menu-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Notre Menu</h2>
+                <p>Consultez notre carte complète</p>
+            </div>
+            <div class="menu-showcase">
+                <div class="menu-image">
+                    <img src="assets/img/Menu.jpg" alt="Menu complet" class="menu-img">
+                </div>
+                <div class="menu-content">
+                    <h3>Carte Complète</h3>
+                    <p>Découvrez l'intégralité de notre carte avec tous nos plats, entrées, desserts et boissons. Nous proposons également des menus personnalisés pour vos événements privés et professionnels.</p>
+                    <ul class="menu-features">
+                        <li><i class="fas fa-check"></i> Plats traditionnels et modernes</li>
+                        <li><i class="fas fa-check"></i> Ingrédients frais et locaux</li>
+                        <li><i class="fas fa-check"></i> Options végétariennes disponibles</li>
+                        <li><i class="fas fa-check"></i> Menus sur mesure pour événements</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-primary">Demander un Devis</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- À Propos Section -->
+    <section id="apropos" class="apropos">
+        <div class="container">
+            <div class="apropos-content">
+                <div class="apropos-text">
+                    <div class="section-header">
+                        <h2>À Propos de Nous</h2>
+                        <p>Passion, tradition et excellence culinaire</p>
+                    </div>
+                    <div class="apropos-description">
+                        <p>Situés au cœur de Strasbourg, nous sommes un traiteur passionné qui met l'accent sur la qualité et l'authenticité. Depuis notre création, nous nous efforçons de proposer une cuisine savoureuse et raffinée pour tous vos événements.</p>
+                        <p>Notre équipe de chefs expérimentés sélectionne les meilleurs ingrédients pour vous offrir des plats exceptionnels, que ce soit pour vos réceptions privées, événements d'entreprise ou simplement pour le plaisir de bien manger.</p>
+                    </div>
+                    <div class="apropos-stats">
+                        <div class="stat">
+                            <div class="stat-number">500+</div>
+                            <div class="stat-label">Événements Réalisés</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">15+</div>
+                            <div class="stat-label">Années d'Expérience</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">100%</div>
+                            <div class="stat-label">Satisfaction Client</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="apropos-image">
+                    <img src="assets/img/ChezToni_plat.jpg" alt="Plat signature" class="floating-image">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="section-header">
+                <h2>Nous Contacter</h2>
+                <p>N'hésitez pas à nous contacter pour vos projets</p>
+            </div>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h3>Adresse</h3>
+                            <p>30 Rue de Soultz<br>67100 Strasbourg</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h3>Téléphone</h3>
+                            <p>03 88 XX XX XX</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h3>Email</h3>
+                            <p>contact@traiteur-strasbourg.fr</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h3>Horaires</h3>
+                            <p>Lun-Ven: 9h-19h<br>Sam: 9h-17h<br>Dim: Fermé</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-form">
+                    <form class="form">
+                        <div class="form-group">
+                            <input type="text" id="name" name="name" placeholder="Votre nom" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="email" name="email" placeholder="Votre email" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="tel" id="phone" name="phone" placeholder="Votre téléphone">
+                        </div>
+                        <div class="form-group">
+                            <select id="service" name="service" required>
+                                <option value="">Type d'événement</option>
+                                <option value="mariage">Mariage</option>
+                                <option value="entreprise">Événement d'entreprise</option>
+                                <option value="anniversaire">Anniversaire</option>
+                                <option value="autre">Autre</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <textarea id="message" name="message" placeholder="Votre message" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-full">Envoyer le Message</button>
+                    </form>
+                </div>
+            </div>
+            <div class="map-container">
+                <div id="map"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Traiteur Strasbourg</h3>
+                    <p>Votre partenaire culinaire pour tous vos événements à Strasbourg et ses environs.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="#specialites">Spécialités</a></li>
+                        <li><a href="#menu">Menu</a></li>
+                        <li><a href="#contact">Devis Personnalisé</a></li>
+                        <li><a href="#contact">Livraison</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt"></i> 30 Rue de Soultz, 67100 Strasbourg</li>
+                        <li><i class="fas fa-phone"></i> 03 88 XX XX XX</li>
+                        <li><i class="fas fa-envelope"></i> contact@traiteur-strasbourg.fr</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Traiteur Strasbourg. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+`
+
+setupCounter(document.querySelector('#counter'))
