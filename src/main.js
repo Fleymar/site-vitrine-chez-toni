@@ -1,317 +1,369 @@
 import './style.css'
-import javascriptLogo from './javascript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.js'
 
-document.querySelector('#app').innerHTML = `
-  <header class="header">
-        <nav class="navbar">
-            <div class="nav-container">
-                <div class="logo">
-                    <h2>Traiteur <span>Strasbourg</span></h2>
-                </div>
-                <ul class="nav-menu">
-                    <li><a href="#accueil" class="nav-link">Accueil</a></li>
-                    <li><a href="#specialites" class="nav-link">Spécialités</a></li>
-                    <li><a href="#menu" class="nav-link">Menu</a></li>
-                    <li><a href="#apropos" class="nav-link">À propos</a></li>
-                    <li><a href="#contact" class="nav-link">Contact</a></li>
-                </ul>
-                <div class="hamburger">
-                    <span class="bar"></span>
-                    <span class="bar"></span>
-                    <span class="bar"></span>
+// Navigation mobile
+document.addEventListener('DOMContentLoaded', function() {
+    const hamburger = document.querySelector('.hamburger');
+    const navMenu = document.querySelector('.nav-menu');
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    // Toggle menu mobile
+    hamburger.addEventListener('click', function() {
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
+    });
+
+    // Fermer le menu quand on clique sur un lien
+    navLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            hamburger.classList.remove('active');
+            navMenu.classList.remove('active');
+        });
+    });
+
+    // Smooth scrolling pour les liens de navigation
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            const targetSection = document.querySelector(targetId);
+            
+            if (targetSection) {
+                targetSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+
+    // Header scroll effect
+    window.addEventListener('scroll', function() {
+        const header = document.querySelector('.header');
+        if (window.scrollY > 100) {
+            header.style.background = 'rgba(255, 255, 255, 0.98)';
+            header.style.boxShadow = '0 2px 20px rgba(0,0,0,0.1)';
+        } else {
+            header.style.background = 'rgba(255, 255, 255, 0.95)';
+            header.style.boxShadow = '0 5px 15px rgba(0,0,0,0.1)';
+        }
+    });
+
+    // Animation des cartes au scroll
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+
+    // Observer les cartes
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+        card.style.transition = 'all 0.6s ease';
+        observer.observe(card);
+    });
+
+    // Observer les sections
+    const sections = document.querySelectorAll('section');
+    sections.forEach(section => {
+        observer.observe(section);
+    });
+
+    // Animation des statistiques
+    const stats = document.querySelectorAll('.stat-number');
+    const statsObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const target = entry.target;
+                const finalValue = target.textContent;
+                const numericValue = parseInt(finalValue.replace(/\D/g, ''));
+                
+                animateCounter(target, 0, numericValue, finalValue);
+                statsObserver.unobserve(target);
+            }
+        });
+    }, { threshold: 0.5 });
+
+    stats.forEach(stat => {
+        statsObserver.observe(stat);
+    });
+
+    // Fonction d'animation des compteurs
+    function animateCounter(element, start, end, suffix) {
+        const duration = 2000;
+        const startTime = performance.now();
+        
+        function updateCounter(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            const current = Math.floor(start + (end - start) * easeOutCubic(progress));
+            element.textContent = current + suffix.replace(/\d/g, '').replace(current.toString(), '');
+            
+            if (progress < 1) {
+                requestAnimationFrame(updateCounter);
+            }
+        }
+        
+        requestAnimationFrame(updateCounter);
+    }
+
+    // Fonction d'easing
+    function easeOutCubic(t) {
+        return 1 - Math.pow(1 - t, 3);
+    }
+
+    // Gestion du formulaire de contact
+    const contactForm = document.querySelector('.form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Récupérer les données du formulaire
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            // Simulation d'envoi (remplacer par votre logique d'envoi)
+            showNotification('Message envoyé avec succès ! Nous vous recontacterons bientôt.', 'success');
+            
+            // Reset du formulaire
+            this.reset();
+        });
+    }
+
+    // Fonction de notification
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.textContent = message;
+        
+        // Styles de la notification
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${type === 'success' ? '#27ae60' : '#3498db'};
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 10000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Animation d'entrée
+        setTimeout(() => {
+            notification.style.transform = 'translateX(0)';
+        }, 100);
+        
+        // Suppression automatique
+        setTimeout(() => {
+            notification.style.transform = 'translateX(400px)';
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 300);
+        }, 4000);
+    }
+
+    // Effet parallax léger sur le hero
+    window.addEventListener('scroll', function() {
+        const scrolled = window.pageYOffset;
+        const heroImage = document.querySelector('.hero-image');
+        if (heroImage) {
+            heroImage.style.transform = `translateY(${scrolled * 0.1}px)`;
+        }
+    });
+
+    // Animation des boutons au hover
+    const buttons = document.querySelectorAll('.btn');
+    buttons.forEach(button => {
+        button.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px) scale(1.05)';
+        });
+        
+        button.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+    });
+});
+
+// Fonction d'initialisation de Google Maps
+window.initMap = function() {
+    // Coordonnées de l'adresse 30 Rue de Soultz, 67100 Strasbourg
+    const traiteurLocation = { lat: 48.5734, lng: 7.7521 };
+    
+    // Options de la carte
+    const mapOptions = {
+        zoom: 15,
+        center: traiteurLocation,
+        styles: [
+            {
+                "featureType": "all",
+                "elementType": "geometry.fill",
+                "stylers": [{"weight": "2.00"}]
+            },
+            {
+                "featureType": "all",
+                "elementType": "geometry.stroke",
+                "stylers": [{"color": "#9c9c9c"}]
+            },
+            {
+                "featureType": "all",
+                "elementType": "labels.text",
+                "stylers": [{"visibility": "on"}]
+            },
+            {
+                "featureType": "landscape",
+                "elementType": "all",
+                "stylers": [{"color": "#f2f2f2"}]
+            },
+            {
+                "featureType": "landscape",
+                "elementType": "geometry.fill",
+                "stylers": [{"color": "#ffffff"}]
+            },
+            {
+                "featureType": "landscape.man_made",
+                "elementType": "geometry.fill",
+                "stylers": [{"color": "#ffffff"}]
+            },
+            {
+                "featureType": "poi",
+                "elementType": "all",
+                "stylers": [{"visibility": "off"}]
+            },
+            {
+                "featureType": "road",
+                "elementType": "all",
+                "stylers": [{"saturation": -100}, {"lightness": 45}]
+            },
+            {
+                "featureType": "road",
+                "elementType": "geometry.fill",
+                "stylers": [{"color": "#eeeeee"}]
+            },
+            {
+                "featureType": "road",
+                "elementType": "labels.text.fill",
+                "stylers": [{"color": "#7b7b7b"}]
+            },
+            {
+                "featureType": "road",
+                "elementType": "labels.text.stroke",
+                "stylers": [{"color": "#ffffff"}]
+            },
+            {
+                "featureType": "road.highway",
+                "elementType": "all",
+                "stylers": [{"visibility": "simplified"}]
+            },
+            {
+                "featureType": "road.arterial",
+                "elementType": "labels.icon",
+                "stylers": [{"visibility": "off"}]
+            },
+            {
+                "featureType": "transit",
+                "elementType": "all",
+                "stylers": [{"visibility": "off"}]
+            },
+            {
+                "featureType": "water",
+                "elementType": "all",
+                "stylers": [{"color": "#46bcec"}, {"visibility": "on"}]
+            },
+            {
+                "featureType": "water",
+                "elementType": "geometry.fill",
+                "stylers": [{"color": "#c8d7d4"}]
+            },
+            {
+                "featureType": "water",
+                "elementType": "labels.text.fill",
+                "stylers": [{"color": "#070707"}]
+            },
+            {
+                "featureType": "water",
+                "elementType": "labels.text.stroke",
+                "stylers": [{"color": "#ffffff"}]
+            }
+        ],
+        disableDefaultUI: false,
+        zoomControl: true,
+        mapTypeControl: false,
+        scaleControl: true,
+        streetViewControl: false,
+        rotateControl: false,
+        fullscreenControl: true
+    };
+    
+    // Créer la carte
+    const map = new google.maps.Map(document.getElementById('map'), mapOptions);
+    
+    // Créer un marqueur personnalisé
+    const marker = new google.maps.Marker({
+        position: traiteurLocation,
+        map: map,
+        title: 'Traiteur Strasbourg - 30 Rue de Soultz',
+        animation: google.maps.Animation.DROP,
+        icon: {
+            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+                    <circle cx="20" cy="20" r="18" fill="#ff6b35" stroke="#fff" stroke-width="2"/>
+                    <circle cx="20" cy="20" r="8" fill="#fff"/>
+                    <text x="20" y="25" text-anchor="middle" fill="#ff6b35" font-family="Arial" font-size="12" font-weight="bold">T</text>
+                </svg>
+            `),
+            scaledSize: new google.maps.Size(40, 40),
+            anchor: new google.maps.Point(20, 20)
+        }
+    });
+    
+    // Info window
+    const infoWindow = new google.maps.InfoWindow({
+        content: `
+            <div style="padding: 10px; font-family: 'Poppins', sans-serif;">
+                <h3 style="color: #2c3e50; margin: 0 0 10px 0;">Traiteur Strasbourg</h3>
+                <p style="margin: 0; color: #7f8c8d;">30 Rue de Soultz<br>67100 Strasbourg</p>
+                <p style="margin: 10px 0 0 0; color: #ff6b35; font-weight: 600;">Cuisine authentique et savoureuse</p>
+            </div>
+        `
+    });
+    
+    // Ouvrir l'info window au clic sur le marqueur
+    marker.addListener('click', function() {
+        infoWindow.open(map, marker);
+    });
+    
+    // Ouvrir l'info window par défaut
+    infoWindow.open(map, marker);
+}
+
+// Gestion des erreurs de chargement de Google Maps
+window.gm_authFailure = function() {
+    console.log('Erreur d\'authentification Google Maps. Veuillez vérifier votre clé API.');
+    const mapContainer = document.getElementById('map');
+    if (mapContainer) {
+        mapContainer.innerHTML = `
+            <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: #f8f9fa; color: #6c757d; text-align: center; padding: 20px;">
+                <div>
+                    <i class="fas fa-map-marker-alt" style="font-size: 3rem; margin-bottom: 1rem; color: #ff6b35;"></i>
+                    <h3>30 Rue de Soultz, 67100 Strasbourg</h3>
+                    <p>Carte temporairement indisponible</p>
                 </div>
             </div>
-        </nav>
-    </header>
-
-    <!-- Hero Section -->
-    <section id="accueil" class="hero">
-        <div class="hero-content">
-            <h1 class="hero-title">Cuisine Authentique<br><span>à Strasbourg</span></h1>
-            <p class="hero-description">Découvrez nos spécialités préparées avec passion et des ingrédients frais pour sublimer vos événements</p>
-            <div class="hero-buttons">
-                <a href="#specialites" class="btn btn-primary">Nos Spécialités</a>
-                <a href="#contact" class="btn btn-secondary">Nous Contacter</a>
-            </div>
-        </div>
-        <div class="hero-image">
-            <img src="assets/img/Resto.jpg" alt="Restaurant" class="floating-image">
-        </div>
-    </section>
-
-    <!-- Spécialités Section -->
-    <section id="specialites" class="specialites">
-        <div class="container">
-            <div class="section-header">
-                <h2>Nos Spécialités</h2>
-                <p>Une sélection de plats préparés avec amour et savoir-faire</p>
-            </div>
-            <div class="specialites-grid">
-                <div class="card">
-                    <div class="card-image">
-                        <img src="assets/img/burger-frites.jpg" alt="Burger Frites">
-                        <div class="card-overlay">
-                            <i class="fas fa-eye"></i>
-                        </div>
-                    </div>
-                    <div class="card-content">
-                        <h3>Burger Artisanal</h3>
-                        <p>Burger maison avec frites croustillantes, préparé avec des ingrédients frais et locaux</p>
-                        <div class="card-price">À partir de 12€</div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-image">
-                        <img src="assets/img/poulet-frites.jpg" alt="Poulet Frites">
-                        <div class="card-overlay">
-                            <i class="fas fa-eye"></i>
-                        </div>
-                    </div>
-                    <div class="card-content">
-                        <h3>Poulet Rôti</h3>
-                        <p>Poulet fermier rôti à la perfection, accompagné de frites dorées et sauce maison</p>
-                        <div class="card-price">À partir de 14€</div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-image">
-                        <img src="assets/img/kebab.jpg" alt="Kebab">
-                        <div class="card-overlay">
-                            <i class="fas fa-eye"></i>
-                        </div>
-                    </div>
-                    <div class="card-content">
-                        <h3>Kebab Traditionnel</h3>
-                        <p>Kebab préparé selon la tradition, viande marinée et légumes frais</p>
-                        <div class="card-price">À partir de 8€</div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-image">
-                        <img src="assets/img/Nems.jpg" alt="Nems">
-                        <div class="card-overlay">
-                            <i class="fas fa-eye"></i>
-                        </div>
-                    </div>
-                    <div class="card-content">
-                        <h3>Nems Croustillants</h3>
-                        <p>Nems faits maison, croustillants à l'extérieur et savoureux à l'intérieur</p>
-                        <div class="card-price">À partir de 6€</div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-image">
-                        <img src="assets/img/Amuses-bouches.jpg" alt="Amuses-bouches">
-                        <div class="card-overlay">
-                            <i class="fas fa-eye"></i>
-                        </div>
-                    </div>
-                    <div class="card-content">
-                        <h3>Amuses-Bouches</h3>
-                        <p>Sélection raffinée d'amuses-bouches pour vos réceptions et événements</p>
-                        <div class="card-price">À partir de 3€/pièce</div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-image">
-                        <img src="assets/img/cocktail.jpg" alt="Cocktails">
-                        <div class="card-overlay">
-                            <i class="fas fa-eye"></i>
-                        </div>
-                    </div>
-                    <div class="card-content">
-                        <h3>Cocktails & Boissons</h3>
-                        <p>Large sélection de cocktails et boissons pour accompagner vos repas</p>
-                        <div class="card-price">À partir de 5€</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Menu Section -->
-    <section id="menu" class="menu-section">
-        <div class="container">
-            <div class="section-header">
-                <h2>Notre Menu</h2>
-                <p>Consultez notre carte complète</p>
-            </div>
-            <div class="menu-showcase">
-                <div class="menu-image">
-                    <img src="assets/img/Menu.jpg" alt="Menu complet" class="menu-img">
-                </div>
-                <div class="menu-content">
-                    <h3>Carte Complète</h3>
-                    <p>Découvrez l'intégralité de notre carte avec tous nos plats, entrées, desserts et boissons. Nous proposons également des menus personnalisés pour vos événements privés et professionnels.</p>
-                    <ul class="menu-features">
-                        <li><i class="fas fa-check"></i> Plats traditionnels et modernes</li>
-                        <li><i class="fas fa-check"></i> Ingrédients frais et locaux</li>
-                        <li><i class="fas fa-check"></i> Options végétariennes disponibles</li>
-                        <li><i class="fas fa-check"></i> Menus sur mesure pour événements</li>
-                    </ul>
-                    <a href="#contact" class="btn btn-primary">Demander un Devis</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- À Propos Section -->
-    <section id="apropos" class="apropos">
-        <div class="container">
-            <div class="apropos-content">
-                <div class="apropos-text">
-                    <div class="section-header">
-                        <h2>À Propos de Nous</h2>
-                        <p>Passion, tradition et excellence culinaire</p>
-                    </div>
-                    <div class="apropos-description">
-                        <p>Situés au cœur de Strasbourg, nous sommes un traiteur passionné qui met l'accent sur la qualité et l'authenticité. Depuis notre création, nous nous efforçons de proposer une cuisine savoureuse et raffinée pour tous vos événements.</p>
-                        <p>Notre équipe de chefs expérimentés sélectionne les meilleurs ingrédients pour vous offrir des plats exceptionnels, que ce soit pour vos réceptions privées, événements d'entreprise ou simplement pour le plaisir de bien manger.</p>
-                    </div>
-                    <div class="apropos-stats">
-                        <div class="stat">
-                            <div class="stat-number">500+</div>
-                            <div class="stat-label">Événements Réalisés</div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-number">15+</div>
-                            <div class="stat-label">Années d'Expérience</div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-number">100%</div>
-                            <div class="stat-label">Satisfaction Client</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="apropos-image">
-                    <img src="assets/img/ChezToni_plat.jpg" alt="Plat signature" class="floating-image">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="contact">
-        <div class="container">
-            <div class="section-header">
-                <h2>Nous Contacter</h2>
-                <p>N'hésitez pas à nous contacter pour vos projets</p>
-            </div>
-            <div class="contact-content">
-                <div class="contact-info">
-                    <div class="contact-item">
-                        <div class="contact-icon">
-                            <i class="fas fa-map-marker-alt"></i>
-                        </div>
-                        <div class="contact-details">
-                            <h3>Adresse</h3>
-                            <p>30 Rue de Soultz<br>67100 Strasbourg</p>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <div class="contact-icon">
-                            <i class="fas fa-phone"></i>
-                        </div>
-                        <div class="contact-details">
-                            <h3>Téléphone</h3>
-                            <p>03 88 XX XX XX</p>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <div class="contact-icon">
-                            <i class="fas fa-envelope"></i>
-                        </div>
-                        <div class="contact-details">
-                            <h3>Email</h3>
-                            <p>contact@traiteur-strasbourg.fr</p>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <div class="contact-icon">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="contact-details">
-                            <h3>Horaires</h3>
-                            <p>Lun-Ven: 9h-19h<br>Sam: 9h-17h<br>Dim: Fermé</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="contact-form">
-                    <form class="form">
-                        <div class="form-group">
-                            <input type="text" id="name" name="name" placeholder="Votre nom" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="email" id="email" name="email" placeholder="Votre email" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="tel" id="phone" name="phone" placeholder="Votre téléphone">
-                        </div>
-                        <div class="form-group">
-                            <select id="service" name="service" required>
-                                <option value="">Type d'événement</option>
-                                <option value="mariage">Mariage</option>
-                                <option value="entreprise">Événement d'entreprise</option>
-                                <option value="anniversaire">Anniversaire</option>
-                                <option value="autre">Autre</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <textarea id="message" name="message" placeholder="Votre message" rows="5" required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-full">Envoyer le Message</button>
-                    </form>
-                </div>
-            </div>
-            <div class="map-container">
-                <div id="map"></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>Traiteur Strasbourg</h3>
-                    <p>Votre partenaire culinaire pour tous vos événements à Strasbourg et ses environs.</p>
-                    <div class="social-links">
-                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
-                    </div>
-                </div>
-                <div class="footer-section">
-                    <h4>Services</h4>
-                    <ul>
-                        <li><a href="#specialites">Spécialités</a></li>
-                        <li><a href="#menu">Menu</a></li>
-                        <li><a href="#contact">Devis Personnalisé</a></li>
-                        <li><a href="#contact">Livraison</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Contact</h4>
-                    <ul>
-                        <li><i class="fas fa-map-marker-alt"></i> 30 Rue de Soultz, 67100 Strasbourg</li>
-                        <li><i class="fas fa-phone"></i> 03 88 XX XX XX</li>
-                        <li><i class="fas fa-envelope"></i> contact@traiteur-strasbourg.fr</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 Traiteur Strasbourg. Tous droits réservés.</p>
-            </div>
-        </div>
-    </footer>
-`
-
-setupCounter(document.querySelector('#counter'))
+        `;
+    }
+}
